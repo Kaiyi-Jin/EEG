@@ -8,7 +8,7 @@ import pandas as pd
 import statsmodels.api as sm
 from scipy import stats
 from sklearn.linear_model import RidgeCV
-from sklearn.model_selection import RepeatedKFold, cross_val_predict
+from sklearn.model_selection import RepeatedKFold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from statsmodels.stats.multitest import multipletests
