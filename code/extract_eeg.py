@@ -28,7 +28,8 @@ def free_text(block):
     lines = [clean(l) for l in block.splitlines() if l.strip()]
     out = []
     for l in lines:  # 以逗号结尾的行与下一行合并(pdf 自动换行)
-        if out and out[-1][-1] in ",，":
+        # 以逗号结尾、或本行无"xx："标签且上一行未以句号结束 -> 视为 pdf 自动换行
+        if out and (out[-1][-1] in ",，" or ("：" not in l and out[-1][-1] not in "。；;")):
             out[-1] += l
         else:
             out.append(l)
@@ -41,22 +42,33 @@ def field(pat, text):
 
 
 def parse_report(p1):
-    h = p1.split("脑电图：")[0]
-    eeg = p1.split("脑电图：", 1)[1] if "脑电图：" in p1 else ""
-    eeg_txt, _, rest = eeg.partition("脑电地形图：")
+    # 头部字段只在同一行内匹配(药物等可能为空, 不能跨行取值)
+    m = re.search(r"床号[:：][^\n]*\n", p1)
+    if m:
+        h, body = p1[:m.end()], p1[m.end():]
+    else:
+        h, _, body = p1.partition("脑电图：")
+    body = body.removeprefix("脑电图：")
+    # 特殊诱发脑电图报告: 波形导联名/标记叠在文字之上, 先去掉
+    body = re.sub(r"\b(?:FP|F|C|P|O|T)\d-[A-Z]+\d\b|标记", "", body)
+    eeg_txt, _, rest = body.partition("脑电地形图：")
     topo, _, concl = rest.partition("结论：")
-    concl = concl.split("仅供参考")[0]
+    if not rest:  # 无地形图的报告: 结论紧跟在脑电图文字后
+        eeg_txt, _, concl = eeg_txt.partition("结论：")
+    concl = re.split(r"仅供参考|起点\d+秒|处理长度", concl)[0]
+    eeg_txt = re.sub(r"^-{3,}.*$", "", eeg_txt, flags=re.M)
+    sp = r"[ \t]*"
     return {
-        "姓名": field(r"姓名[:：]\s*(\S+)", h),
-        "年龄": field(r"年龄[:：]\s*(\d+)", h),
-        "性别": field(r"性别[:：]\s*(\S+)", h),
-        "脑电编号": field(r"编号[:：]\s*(\d+)", h),
-        "左右利": field(r"左右利[:：]\s*(\S+)", h),
-        "是否合作": field(r"合作[:：]\s*(\S+)", h),
-        "检查日期": field(r"检查日期[:：]\s*([\d-]+)", h),
-        "意识": field(r"意识[:：]\s*(\S+)", h),
-        "药物": field(r"药物[:：]\s*(\S+)", h),
-        "临床诊断": field(r"临床诊断[:：]\s*(.+)", h),
+        "姓名": field(rf"姓名[:：]{sp}(\S*)", h),
+        "年龄": field(rf"年龄[:：]{sp}(\d*)", h),
+        "性别": field(rf"性别[:：]{sp}(\S*)", h),
+        "脑电编号": field(rf"编号[:：]{sp}(\d*)", h),
+        "左右利": field(rf"左右利[:：]{sp}(\S*)", h),
+        "是否合作": field(rf"合作[:：]{sp}(\S*)", h),
+        "检查日期": field(rf"检查日期[:：]{sp}([\d-]*)", h),
+        "意识": field(rf"意识[:：]{sp}(\S*)", h),
+        "药物": field(rf"药物[:：]{sp}(\S*)", h),
+        "临床诊断": field(rf"临床诊断[:：]{sp}(.*)", h),
         "脑电图": free_text(eeg_txt),
         "脑电地形图": free_text(topo),
         "脑电结论": free_text(concl),
