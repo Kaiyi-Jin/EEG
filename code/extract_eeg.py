@@ -117,7 +117,7 @@ def main():
         rows.append(row)
         has_report = "姓名" in pages[0]  # 个别 pdf(如夏建香)只有波形页, 没有文字报告
         wf = parse_waveform(pages[1:] if has_report else pages, pages[0])
-        wf.update({"脑电编号": row["脑电编号"], "姓名": row["姓名"]})
+        wf.update({"脑电编号": row["脑电编号"], "姓名": row["姓名"], "源文件": pdf.name})
         (WAVE_DIR / f"{row['脑电编号']}.json").write_text(
             json.dumps(wf, ensure_ascii=False, indent=2), encoding="utf-8")
     df = pd.DataFrame(rows)
