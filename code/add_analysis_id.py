@@ -33,6 +33,13 @@ def main():
         if len(c) == 1:
             out.loc[i, "分析数据编号"] = c["分析数据编号"].iloc[0]
             out.loc[i, "匹配方式"] = f"姓名+性别+年龄差<={AGE_TOL}"
+    # 人工指定匹配: output/manual_matches.csv (列: 脑电编号,分析数据编号; 含患者信息, 已被 gitignore)
+    manual = CSV.parent / "manual_matches.csv"
+    if manual.exists():
+        mm = pd.read_csv(manual, dtype=str).set_index("脑电编号")["分析数据编号"]
+        hit = out["脑电编号"].isin(mm.index)
+        out.loc[hit, "分析数据编号"] = out.loc[hit, "脑电编号"].map(mm)
+        out.loc[hit, "匹配方式"] = "手动匹配"
     out.to_csv(CSV, index=False, encoding="utf-8-sig")
     miss = out[out["分析数据编号"].isna()]
     print(f"匹配 {out['分析数据编号'].notna().sum()}/{len(out)}; 未匹配 {len(miss)}")
