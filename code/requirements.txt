@@ -1,3 +1,7 @@
 pdfplumber
 pandas
 openpyxl
+scipy
+matplotlib
+scikit-learn
+specparam
