@@ -1,0 +1,8 @@
+# 患者数据不入库, 仅同步代码
+脑电/
+脑电.zip
+*.xlsx
+output/
+.venv/
+__pycache__/
+.DS_Store
