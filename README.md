@@ -28,3 +28,6 @@ python3 -m venv .venv && .venv/bin/pip install -r code/requirements.txt   # 另�
 
 ## 分支 `kmeans-bdz-64d`：64 维 + K-means
 `.venv/bin/python code/kmeans_bdz_64d.py` → `output/kmeans_bdz_64d/`（64 维 CLR 标准化，按 BDZ 分组 + 全体参考；K=2..8 用轮廓系数/CH/DB/Gap 选 K，bootstrap 稳定性，簇间减分率检验）。
+
+## 分支 `predict-64d-kfold`：64 维 → 减分率 预测模型（BDZ 分组, K 折）
+`.venv/bin/python -u code/predict_outcome_64d.py` → `output/predict_64d/`（10 折×2 重复 CV，训练折内标准化 + 内层调参；Ridge/ElasticNet/PLS/RF/SVR 回归，逻辑回归/RF 分类；排列检验）。
