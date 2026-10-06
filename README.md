@@ -22,3 +22,6 @@ python3 -m venv .venv && .venv/bin/pip install -r code/requirements.txt   # 另�
 
 ## 分支 `bdz-alldim-gmm`：不降维(全 37 维) + BDZ 分层聚类
 `.venv/bin/python code/gmm_bdz_alldim.py` → `output/clustering_bdz_alldim/`（与 bdz-stratified-gmm 的区别仅是去掉 PCA，保留全部标准化特征）。
+
+## 分支 `bdz-64d-gmm`：64 维(16 导联×4 频带) + BDZ 分层聚类
+`.venv/bin/python code/gmm_bdz_64d.py` → `output/clustering_bdz_64d/`（逐导联 1–30 Hz 相对功率 → CLR，不降维，按 BDZ 分组）。
