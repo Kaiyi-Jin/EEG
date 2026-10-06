@@ -19,3 +19,6 @@ python3 -m venv .venv && .venv/bin/pip install -r code/requirements.txt   # 另�
 
 ## 分支 `bdz-stratified-gmm`：按 BDZ 使用与否分层聚类
 `.venv/bin/python code/gmm_bdz_stratified.py` → `output/clustering_bdz/`（按分析数据【BDZ是否使用】分两组，组内各自跑同一套单页 GMM 流程）。
+
+## 分支 `bdz-alldim-gmm`：不降维(全 37 维) + BDZ 分层聚类
+`.venv/bin/python code/gmm_bdz_alldim.py` → `output/clustering_bdz_alldim/`（与 bdz-stratified-gmm 的区别仅是去掉 PCA，保留全部标准化特征）。

@@ -59,7 +59,7 @@ def run_group(name, F, meta):
     log(f"年龄 {age.mean():.1f}±{age.std():.1f}, 男 {(meta['性别'] == '男').mean():.0%}")
     X = g.design(F)
     Z, pca, cum = g.reduce(X)
-    log(f"{X.shape[1]} 维 -> PCA {Z.shape[1]} 个主成分 (累计方差 {cum[Z.shape[1] - 1]:.1%})")
+    log(f"{X.shape[1]} 维 -> 聚类输入 {Z.shape[1]} 维" + ("" if pca is None else f" (PCA, 累计方差 {cum[Z.shape[1] - 1]:.1%})"))
     g.K_RANGE = range(1, 7 if len(Z) < 100 else 9)
     bt = g.bic_table(Z)
     bt.to_csv(d / "bic.csv", index=False)
