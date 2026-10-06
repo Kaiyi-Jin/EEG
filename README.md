@@ -25,3 +25,6 @@ python3 -m venv .venv && .venv/bin/pip install -r code/requirements.txt   # 另�
 
 ## 分支 `bdz-64d-gmm`：64 维(16 导联×4 频带) + BDZ 分层聚类
 `.venv/bin/python code/gmm_bdz_64d.py` → `output/clustering_bdz_64d/`（逐导联 1–30 Hz 相对功率 → CLR，不降维，按 BDZ 分组）。
+
+## 分支 `kmeans-bdz-64d`：64 维 + K-means
+`.venv/bin/python code/kmeans_bdz_64d.py` → `output/kmeans_bdz_64d/`（64 维 CLR 标准化，按 BDZ 分组 + 全体参考；K=2..8 用轮廓系数/CH/DB/Gap 选 K，bootstrap 稳定性，簇间减分率检验）。
