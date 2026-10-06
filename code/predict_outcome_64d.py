@@ -29,6 +29,7 @@ OUT = ROOT / "output"
 D = OUT / "predict_64d"
 OUTCOMES = ["睡眠减分率", "总分减分率"]
 N_SPLITS, N_REPEATS, SEED = 10, 2, 0
+FEAT_LABEL = "64维"   # 输出表中的特征集名称(其他分支可改写)
 lines = []
 
 
@@ -110,9 +111,9 @@ def evaluate(sname, s, feats, cov, rows):
         specs = [("仅协变量(基线, Ridge)", C, reg_models()["Ridge"], 0)]
         for nm, mk in reg_models().items():
             n_perm = {"Ridge": 100, "PLS": 50}.get(nm, 25)
-            specs.append((f"64维 {nm}", X64, mk, n_perm))
+            specs.append((f"{FEAT_LABEL} {nm}", X64, mk, n_perm))
         for nm in ("Ridge", "ElasticNet"):
-            specs.append((f"64维+协变量 {nm}", XC, reg_models()[nm], 100 if nm == "Ridge" else 25))
+            specs.append((f"{FEAT_LABEL}+协变量 {nm}", XC, reg_models()[nm], 100 if nm == "Ridge" else 25))
         for label, X, mk, npm in specs:
             obs, oof = cv_reg(mk, X, y, splits)
             nm_, p = perm_p(cv_reg, mk, X, y, splits, obs, npm) if npm else (np.nan, np.nan)
@@ -126,8 +127,8 @@ def evaluate(sname, s, feats, cov, rows):
         log(f"{'模型':28s} {'CV AUC':>8s} {'排列零均值':>10s} {'排列p':>7s}")
         specs = [("仅协变量(基线, Logistic)", C, clf_models()["Logistic(L2)"], 0)]
         for nm, mk in clf_models().items():
-            specs.append((f"64维 {nm}", X64, mk, 50 if nm.startswith("Log") else 25))
-        specs.append(("64维+协变量 Logistic(L2)", XC, clf_models()["Logistic(L2)"], 50))
+            specs.append((f"{FEAT_LABEL} {nm}", X64, mk, 50 if nm.startswith("Log") else 25))
+        specs.append((f"{FEAT_LABEL}+协变量 Logistic(L2)", XC, clf_models()["Logistic(L2)"], 50))
         for label, X, mk, npm in specs:
             obs, _ = cv_clf(mk, X, yb, splits)
             nm_, p = perm_p(cv_clf, mk, X, yb, splits, obs, npm, stratified=True) if npm else (np.nan, np.nan)

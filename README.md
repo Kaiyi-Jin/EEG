@@ -31,3 +31,6 @@ python3 -m venv .venv && .venv/bin/pip install -r code/requirements.txt   # 另�
 
 ## 分支 `predict-64d-kfold`：64 维 → 减分率 预测模型（BDZ 分组, K 折）
 `.venv/bin/python -u code/predict_outcome_64d.py` → `output/predict_64d/`（10 折×2 重复 CV，训练折内标准化 + 内层调参；Ridge/ElasticNet/PLS/RF/SVR 回归，逻辑回归/RF 分类；排列检验）。
+
+## 分支 `predict-37d-kfold`：37 维 → 减分率 预测模型（BDZ 分组, K 折）
+`.venv/bin/python -u code/predict_outcome_37d.py` → `output/predict_37d/`（8 脑区 CLR 32 维 + 5 个补充特征；流程同 64 维版本）。
